@@ -1,14 +1,17 @@
-GPU=0
-CUDNN=0
-OPENCV=0
+GPU=1
+CUDNN=1
+OPENCV=1
 OPENMP=0
 DEBUG=0
 
 ARCH= -gencode arch=compute_30,code=sm_30 \
       -gencode arch=compute_35,code=sm_35 \
-      -gencode arch=compute_50,code=[sm_50,compute_50] \
-      -gencode arch=compute_52,code=[sm_52,compute_52]
-#      -gencode arch=compute_20,code=[sm_20,sm_21] \ This one is deprecated?
+      -gencode arch=compute_37,code=sm_37 \
+      -gencode arch=compute_50,code=sm_50 \
+      -gencode arch=compute_52,code=sm_52 \
+      -gencode arch=compute_60,code=sm_60 \
+      #-gencode arch=compute_70,code=sm_70 \
+      #-gencode arch=compute_70,code=compute_70
 
 # This is what I use, uncomment if you know your arch and want to specify
 # ARCH= -gencode arch=compute_52,code=compute_52
@@ -20,7 +23,7 @@ EXEC=darknet
 OBJDIR=./obj/
 
 CC=gcc
-NVCC=nvcc 
+NVCC=/usr/local/cuda-9.0/bin/nvcc 
 AR=ar
 ARFLAGS=rcs
 OPTS=-Ofast
@@ -85,7 +88,7 @@ $(OBJDIR)%.o: %.c $(DEPS)
 	$(CC) $(COMMON) $(CFLAGS) -c $< -o $@
 
 $(OBJDIR)%.o: %.cu $(DEPS)
-	$(NVCC) $(ARCH) $(COMMON) --compiler-options "$(CFLAGS)" -c $< -o $@
+	$(NVCC) $(ARCH) $(COMMON) -ccbin clang-3.8 --compiler-options "$(CFLAGS)" -c $< -o $@
 
 obj:
 	mkdir -p obj
